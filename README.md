@@ -3,5 +3,5 @@
 ## Repository Struktur
 
 - Main Notebook: `DAAD-AURSAD-lib.ipynb`
-- Model implementation: `machine_learning/``
+- Model implementation: `machine_learning/`
 - Data (excluded from repo): `data/`
