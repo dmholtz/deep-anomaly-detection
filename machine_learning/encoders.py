@@ -210,8 +210,7 @@ class CNN_LSTM_SA_Encoder(Encoder):
         h = layers.MaxPool1D(2)(h)
         c, self.attention_scores = SelfAttention()(h)
 
-        x = layers.Multiply()([c, x])
-        x = layers.LSTM(units=64, return_sequences=False)(x)
+        x = layers.LSTM(units=64, return_sequences=False)(c)
         return x
 
     def attention_model(self):
