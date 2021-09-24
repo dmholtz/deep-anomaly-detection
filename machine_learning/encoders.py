@@ -105,39 +105,6 @@ class WaveNet_Encoder(Encoder):
         return layers.Flatten()(x)
 
 
-class WaveNetOpt_Encoder(Encoder):
-    """Maps from the latent space z to the input space x."""
-
-    def __init__(
-            self,
-            input,  # keras.Input
-            name="wavenet-encoder",
-            latent_dim=2,
-            is_variational=True,
-            **kwargs):
-        super(WaveNetOpt_Encoder, self).__init__(input, name=name,
-                                                 latent_dim=latent_dim, is_variational=is_variational, **kwargs)
-
-    def _encoder_architecture(self, input):
-
-        x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-                          dilation_rate=1, activation="relu", padding="causal")(input)
-        x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-                          dilation_rate=2, activation="relu", padding="causal")(x)
-        x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-                          dilation_rate=4, activation="relu", padding="causal")(x)
-        x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-                          dilation_rate=8, activation="relu", padding="causal")(x)
-        x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-                          dilation_rate=16, activation="relu", padding="causal")(x)
-        x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-                          dilation_rate=32, activation="relu", padding="causal")(x)
-        # x = layers.Conv1D(filters=16, kernel_size=5, strides=1,
-        #                  dilation_rate=64, activation="relu", padding="causal")(x)
-        x = layers.MaxPool1D(2)(x)
-        return layers.Flatten()(x)
-
-
 class LSTM_Encoder(Encoder):
     """Maps from the latent space z to the input space x."""
 
@@ -202,13 +169,7 @@ class CNN_LSTM_SA_Encoder(Encoder):
                           activation='relu', padding='same')(input)
         x = layers.Conv1D(filters=16, kernel_size=5, strides=2,
                           activation='relu', padding='same')(x)
-        h = layers.Conv1D(filters=32, kernel_size=5, strides=2,
-                          activation='relu', padding='same')(x)
-        x = layers.Conv1D(filters=32, kernel_size=5, strides=2,
-                          activation='relu', padding='same')(h)
-
-        h = layers.MaxPool1D(2)(h)
-        c, self.attention_scores = SelfAttention()(h)
+        c, self.attention_scores = SelfAttention()(x)
 
         x = layers.LSTM(units=64, return_sequences=False)(c)
         return x

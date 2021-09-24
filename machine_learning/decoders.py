@@ -108,3 +108,27 @@ class CNN_LSTM_Decoder(Decoder):
                  strides=2, activation='relu', padding='same'))
         self.add(layers.Conv1DTranspose(filters=self.num_features,
                  kernel_size=5, strides=3, activation='relu', padding='same'))
+
+
+class CNN_LSTM_SA_Decoder(Decoder):
+
+    def __init__(
+            self,
+            sequence_length,
+            num_features,
+            name="cnn-lstm-sa-decoder",
+            latent_dim=2,
+            **kwargs):
+        super(CNN_LSTM_SA_Decoder, self).__init__(name=name, sequence_length=sequence_length,
+                                                  num_features=num_features, latent_dim=latent_dim, **kwargs)
+
+        upsampling_dim = self.sequence_length // 6
+
+        self.add(layers.Dense(64, input_dim=self.latent_dim, activation="relu"))
+        self.add(layers.RepeatVector(upsampling_dim))
+        self.add(layers.LSTM(64, return_sequences=True))
+        self.add(layers.TimeDistributed(layers.Dense(32)))
+        self.add(layers.Conv1DTranspose(filters=8, kernel_size=5,
+                 strides=2, activation='relu', padding='same'))
+        self.add(layers.Conv1DTranspose(filters=self.num_features,
+                 kernel_size=5, strides=3, activation='relu', padding='same'))
